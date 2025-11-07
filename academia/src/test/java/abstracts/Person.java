@@ -1,9 +1,11 @@
 package abstracts;
 
+import com.sun.istack.NotNull;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
+import lombok.Data;
 
 import java.time.LocalDate;
 import java.util.Objects;
@@ -15,6 +17,7 @@ public abstract class Person {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @NotNull
     private String firstName;
     private String lastName;
     private String email;
