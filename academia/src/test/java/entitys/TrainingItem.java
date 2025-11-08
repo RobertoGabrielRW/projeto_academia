@@ -32,9 +32,8 @@ public class TrainingItem {
 
     private Integer descansoSegundos;
 
-    // --- Relacionamentos (Chaves Estrangeiras) ---
 
-    // Muitos Itens pertencem a UM Treino (Correto)
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "training_id", nullable = false)
     private Training training;
