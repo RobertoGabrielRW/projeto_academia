@@ -17,6 +17,7 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class TrainingItem {
 
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -41,5 +42,5 @@ public class TrainingItem {
     // Muitos Itens usam UM Exercício (Dependência)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "exercise_id", nullable = false)
-    private Exercises exercicios;
+    private Exercise exercicios;
 }

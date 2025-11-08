@@ -16,6 +16,7 @@ import java.util.List;
 @Setter
 public abstract class Training {
 
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

@@ -27,7 +27,8 @@ public abstract class Person {
 
     public Person() {
     }
-    //construtor completo da classe Person
+
+
     public Person(Long id, String firstName, String lastName, String email, String phone, LocalDate dateOfBirth, String gender, boolean active) {
         this.id = id;
         this.firstName = firstName;
