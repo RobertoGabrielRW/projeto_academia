@@ -10,8 +10,7 @@ import lombok.Data;
 import java.time.LocalDate;
 import java.util.Objects;
 
-//classe abstrata que representa uma pessoa no sistema da academia
-//contém atributos comuns usados por membros, treinadores e funcionários
+
 @MappedSuperclass
 public abstract class Person {
     @Id

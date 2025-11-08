@@ -1,24 +1,27 @@
 package entitys;
 
+
+
 import abstracts.Training;
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
-
 @Entity
-@Table(name = "TrainingItem")
-@Data
+@Table(name = "training_item")
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-
-public class TrainingItem extends Training {
+public class TrainingItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // --- Atributos de Quantidade ---
     @Column(nullable = false)
     private Integer series;
 
@@ -29,11 +32,15 @@ public class TrainingItem extends Training {
 
     private Integer descansoSegundos;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "treino_id", nullable = false)
-    protected Training training;
+    // --- Relacionamentos (Chaves Estrangeiras) ---
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "exercicio_id", nullable = false)
-//    private Exercises exercicios;
+    // Muitos Itens pertencem a UM Treino (Correto)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "training_id", nullable = false)
+    private Training training;
+
+    // Muitos Itens usam UM Exercício (Dependência)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "exercise_id", nullable = false)
+    private Exercises exercicios;
 }
