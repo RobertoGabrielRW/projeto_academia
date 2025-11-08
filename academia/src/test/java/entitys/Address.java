@@ -1,27 +1,29 @@
 package entitys;
 
-import jakarta.persistence.*;
-import java.util.List;
-import java.util.ArrayList;
-import lombok.Data;
+import jakarta.persistence.Embeddable; // 1. IMPORTAÇÃO CORRETA
+import jakarta.persistence.Column;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
-@Entity
-@Data
+@Embeddable // 2. CORREÇÃO CRÍTICA: Não é uma entidade, é um componente
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Address {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
 
-    @Column(nullable = false)
+    @Column(name = "street", nullable = false)
     private String street;
 
-    @Column(nullable = false)
-    private int houseNumber;
+    @Column(name = "house_number", nullable = false)
+    private String houseNumber;
 
-    @Column(nullable = false)
-    private double postalCode;
+    @Column(name = "postal_code", nullable = false, length = 15)
+    private String postalCode;
 
-    @Column
+    @Column(name = "complement")
     private String complement;
 }

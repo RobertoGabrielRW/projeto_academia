@@ -1,34 +1,36 @@
 package entitys;
 
 import jakarta.persistence.*;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import lombok.Data;
+import lombok.Getter; // 1. Usar @Getter
+import lombok.Setter; // 2. Usar @Setter
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "academy")
+@Table(name = "academy") // snake_case
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Academy {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // CNPJ (Corporate Tax ID) - Identificador fiscal da academia
-    @Column(name = "cnpj", nullable = false, unique = true, length = 18)
+    @Column(name = "corporate_tax_id", nullable = false, unique = true, length = 18)
     private String corporateTaxId;
 
-    // Contato
     @Column(nullable = false, length = 100)
     private String email;
 
     @Column(nullable = false, length = 20)
     private String phone;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "address_id", nullable = false)
+    // 3. CORREÇÃO CRÍTICA: Se Address for @Embeddable, use @Embedded, não @OneToOne
+    @Embedded
     private Address address;
 
     @OneToMany(mappedBy = "academy", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -38,5 +40,5 @@ public class Academy {
     private List<Employee> employees = new ArrayList<>();
 
     @OneToMany(mappedBy = "academy", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PersonalTrainner> personalTrainers = new ArrayList<>();
+    private List<PersonalTrainner> personalTrainers = new ArrayList<>(); // 4. Corrigido o nome da classe
 }

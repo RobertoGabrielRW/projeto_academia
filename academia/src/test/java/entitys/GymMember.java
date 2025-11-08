@@ -1,18 +1,35 @@
 package entitys;
 
 import abstracts.Person;
-import com.sun.istack.NotNull;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Table;
-import lombok.Data;
+import abstracts.Training;
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+import java.util.List;
+import java.util.ArrayList;
+
 
 @Entity
-@Table(name = "GymMember")
+@Table(name = "gym_member")
+@PrimaryKeyJoinColumn(name = "person_id")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class GymMember extends Person {
-    @NotNull
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+
+
+    @Column(name = "enrollment", unique = true, nullable = false)
     private Long enrollment;
 
+
+    @OneToMany(mappedBy = "gymMember", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Training> trainings = new ArrayList<>();
+
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "personal_trainer_id")
+    private PersonalTrainner personalTrainer;
 }

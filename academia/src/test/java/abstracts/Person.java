@@ -10,7 +10,8 @@ import lombok.*; // Importa as anotações do Lombok
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "person")
-@Data // Gera automaticamente getters, setters, equals, hashCode e toString
+@Getter
+@Setter
 @NoArgsConstructor // Construtor vazio (necessário para JPA)
 @AllArgsConstructor // Construtor com todos os atributos
 public abstract class Person {

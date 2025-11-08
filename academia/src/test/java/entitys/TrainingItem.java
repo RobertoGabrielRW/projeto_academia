@@ -2,38 +2,41 @@ package entitys;
 
 import abstracts.Training;
 import jakarta.persistence.*;
-import jakarta.persistence.Entity;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
-
 @Entity
-@Table(name = "TrainingItem")
-@Data
+@Table(name = "training_item")
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
+public class TrainingItem {
 
-public class TrainingItem extends Training {
-
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private Integer series;
 
     @Column(nullable = false)
-    private Integer repeticoes;
+    private Integer sets;
 
-    private Double cargaKg;
+    @Column(nullable = false)
+    private Integer repetitions;
 
-    private Integer descansoSegundos;
+    private Double loadKg;
+
+    private Integer restSeconds;
+
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "treino_id", nullable = false)
-    protected Training training;
+    @JoinColumn(name = "training_id", nullable = false)
+    private Training training;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "exercicio_id", nullable = false)
-//    private Exercises exercicios;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "exercise_id", nullable = false)
+    private Exercise exercise;
 }
