@@ -1,6 +1,9 @@
 package entitys;
 
 import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import lombok.Data;
 import java.util.ArrayList;
 import java.util.List;
