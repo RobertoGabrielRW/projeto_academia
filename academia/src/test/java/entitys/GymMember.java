@@ -11,7 +11,6 @@ import lombok.Data;
 @Entity
 @Table(name = "GymMember")
 public class GymMember extends Person {
-
     @NotNull
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long enrollment;
