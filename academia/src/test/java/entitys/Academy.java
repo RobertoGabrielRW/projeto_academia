@@ -18,7 +18,7 @@ public class Academy {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long idAcademia;
 
     @Column(name = "corporate_tax_id", nullable = false, unique = true, length = 18)
     private String corporateTaxId;
@@ -29,7 +29,7 @@ public class Academy {
     @Column(nullable = false, length = 20)
     private String phone;
 
-    // 3. CORREÇÃO CRÍTICA: Se Address for @Embeddable, use @Embedded, não @OneToOne
+
     @Embedded
     private Address address;
 
@@ -40,5 +40,5 @@ public class Academy {
     private List<Employee> employees = new ArrayList<>();
 
     @OneToMany(mappedBy = "academy", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PersonalTrainner> personalTrainers = new ArrayList<>(); // 4. Corrigido o nome da classe
+    private List<PersonalTrainer> personalTrainers = new ArrayList<>(); // 4. Corrigido o nome da classe
 }

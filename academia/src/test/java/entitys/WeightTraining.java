@@ -21,7 +21,5 @@ public class WeightTraining extends Training {
     @Column(length = 50)
     private String trainingSplit;
 
-    @Column(length = 50)
-    private String trainingObjective;
 
 }

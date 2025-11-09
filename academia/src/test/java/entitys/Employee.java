@@ -18,8 +18,8 @@ import lombok.AllArgsConstructor;
 public class Employee extends Person {
 
 
-    @Column(name = "employee_id_pk")
-    private Long employeeId; // Mapeia o idFuncionario: long
+    @Column(name = "employee_id", unique = true)
+    private Long employeeId;
 
 
     @Column(name = "area_of_expertise", length = 100)

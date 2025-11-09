@@ -2,7 +2,6 @@ package entitys;
 
 import abstracts.Person;
 import jakarta.persistence.*;
-import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
@@ -11,7 +10,7 @@ import lombok.AllArgsConstructor;
 @PrimaryKeyJoinColumn(name = "person_id")
 @NoArgsConstructor
 @AllArgsConstructor
-public class PersonalTrainner extends Person {
+public class PersonalTrainer extends Person {
 
 
 

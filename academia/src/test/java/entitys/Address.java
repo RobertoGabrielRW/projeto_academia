@@ -7,7 +7,7 @@ import lombok.Setter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
-@Embeddable // 2. CORREÇÃO CRÍTICA: Não é uma entidade, é um componente
+@Embeddable
 @Getter
 @Setter
 @NoArgsConstructor

@@ -31,5 +31,5 @@ public class GymMember extends Person {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "personal_trainer_id")
-    private PersonalTrainner personalTrainer;
+    private PersonalTrainer personalTrainer;
 }
