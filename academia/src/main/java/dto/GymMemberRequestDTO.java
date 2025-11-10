@@ -1,6 +1,5 @@
 package dto;
 
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -13,20 +12,12 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class GymMemberRequestDTO {
 
-    @NotNull(message = "A matrícula é obrigatória.")
-    private Long enrollment; // ID de Negócio
-
-    @NotBlank(message = "O nome é obrigatório.")
+    // CAMPOS HERDADOS DE PERSON
+    @NotBlank(message = "O primeiro nome é obrigatório.")
     private String firstName;
 
     @NotBlank(message = "O sobrenome é obrigatório.")
     private String lastName;
-
-    @Email(message = "Email inválido.")
-    @NotBlank(message = "O email é obrigatório.")
-    private String email;
-
-    private String phone;
 
     @NotNull(message = "A data de nascimento é obrigatória.")
     private LocalDate dateOfBirth;
@@ -34,12 +25,14 @@ public class GymMemberRequestDTO {
     @NotBlank(message = "O gênero é obrigatório.")
     private String gender;
 
+    // CAMPO ESPECÍFICO DE GYM MEMBER
+    @NotBlank(message = "O número de matrícula é obrigatório.")
+    private String enrollment;
 
+    // CAMPO DE RELACIONAMENTO (Chave estrangeira)
+    @NotNull(message = "O ID da Academia é obrigatório.")
+    private Long academyId;
+
+    @NotNull(message = "O ID do Personal Trainer é obrigatório.")
     private Long personalTrainerId;
-
-
-    @NotBlank private String street;
-    @NotBlank private String houseNumber;
-    @NotBlank private String postalCode;
-    private String complement;
 }

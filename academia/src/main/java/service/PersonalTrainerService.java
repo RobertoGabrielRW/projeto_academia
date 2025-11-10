@@ -1,69 +1,90 @@
 package service;
 
+import dto.PersonalTrainerRequestDTO;
 import entitys.PersonalTrainer;
+import entitys.Academy;
 import repository.PersonalTrainerRepository;
+import repository.AcademyRepository;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
-import java.util.Optional;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @Service
 public class PersonalTrainerService {
 
-    private final PersonalTrainerRepository personalTrainerRepository;
+    private final PersonalTrainerRepository trainerRepository;
+    private final AcademyRepository academyRepository; // Necessário para associar o trainer à Academy
 
-    public PersonalTrainerService(PersonalTrainerRepository personalTrainerRepository) {
-        this.personalTrainerRepository = personalTrainerRepository;
+    public PersonalTrainerService(PersonalTrainerRepository trainerRepository, AcademyRepository academyRepository) {
+        this.trainerRepository = trainerRepository;
+        this.academyRepository = academyRepository;
     }
 
-    // --- CREATE
+    // --- CREATE ---
     @Transactional
-    public PersonalTrainer create(PersonalTrainer trainer) {
-        trainer.setAvailable(true); // Regra de negócio
-        return personalTrainerRepository.save(trainer);
+    public PersonalTrainer create(PersonalTrainerRequestDTO dto) {
+        // 1. Validação de Regra de Negócio: Academia deve existir
+        Academy academy = academyRepository.findById(dto.getAcademyId())
+                .orElseThrow(() -> new NoSuchElementException("Academy not found for Trainer assignment."));
+
+
+        PersonalTrainer trainer = new PersonalTrainer();
+        trainer.setFirstName(dto.getFirstName());
+        trainer.setLastName(dto.getLastName());
+
+        trainer.setCertification(dto.getCertification());
+        trainer.setHourlyRate(dto.getHourlyRate());
+        trainer.setYearsOfExperience(dto.getYearsOfExperience());
+        trainer.setSpecialties(dto.getSpecialties());
+
+        // Associação
+        trainer.setAcademy(academy);
+
+        return trainerRepository.save(trainer);
     }
 
-    // --- READ
+    // --- READ ---
     @Transactional(readOnly = true)
     public List<PersonalTrainer> findAll() {
-        return personalTrainerRepository.findAll();
+        return trainerRepository.findAll();
     }
 
     @Transactional(readOnly = true)
     public Optional<PersonalTrainer> findById(Long id) {
-        return personalTrainerRepository.findById(id);
+        return trainerRepository.findById(id);
     }
 
-    @Transactional(readOnly = true)
-    public List<PersonalTrainer> findAvailableBySpecialty(String specialty) {
-        return personalTrainerRepository.findBySpecialtiesContainingAndAvailableTrue(specialty);
-    }
-
-    // --- UPDATE
+    // --- UPDATE ---
     @Transactional
-    public PersonalTrainer update(Long id, PersonalTrainer updatedData) {
-        PersonalTrainer existingTrainer = personalTrainerRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("Treinador não encontrado com ID: " + id));
+    public PersonalTrainer update(Long id, PersonalTrainerRequestDTO dto) {
+        PersonalTrainer existingTrainer = trainerRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Personal Trainer not found with ID: " + id));
 
-        existingTrainer.setCertification(updatedData.getCertification());
-        existingTrainer.setHourlyRate(updatedData.getHourlyRate());
-        existingTrainer.setAvailable(updatedData.getAvailable());
-        existingTrainer.setScheduleNotes(updatedData.getScheduleNotes());
+        // 1. Atualiza campos comuns
+        existingTrainer.setFirstName(dto.getFirstName());
+        existingTrainer.setLastName(dto.getLastName());
+        // ... (Outros campos de Person/Employee)
 
+        // 2. Atualiza campos específicos
+        existingTrainer.setCertification(dto.getCertification());
+        existingTrainer.setHourlyRate(dto.getHourlyRate());
+        existingTrainer.setYearsOfExperience(dto.getYearsOfExperience());
+        existingTrainer.setSpecialties(dto.getSpecialties());
 
-        existingTrainer.setFirstName(updatedData.getFirstName());
-        existingTrainer.setEmail(updatedData.getEmail());
+        // Se o academyId mudar, buscar a nova Academy e atualizar a associação (Opcional)
 
-        return personalTrainerRepository.save(existingTrainer);
+        return trainerRepository.save(existingTrainer);
     }
 
-    // --- DELETE
+    // --- DELETE ---
     @Transactional
     public void deleteById(Long id) {
-        if (!personalTrainerRepository.existsById(id)) {
-            throw new NoSuchElementException("Treinador não encontrado com ID: " + id);
+        if (!trainerRepository.existsById(id)) {
+            throw new NoSuchElementException("Personal Trainer not found with ID: " + id);
         }
-        personalTrainerRepository.deleteById(id);
+        trainerRepository.deleteById(id);
     }
 }

@@ -1,66 +1,98 @@
 package service;
 
+import dto.GymMemberRequestDTO;
 import entitys.GymMember;
+import entitys.Academy;
+import entitys.PersonalTrainer;
 import repository.GymMemberRepository;
+import repository.AcademyRepository;
+import repository.PersonalTrainerRepository;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
-import java.util.Optional;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @Service
 public class GymMemberService {
 
-    private final GymMemberRepository gymMemberRepository;
+    private final GymMemberRepository memberRepository;
+    private final AcademyRepository academyRepository;
+    private final PersonalTrainerRepository trainerRepository;
 
-    public GymMemberService(GymMemberRepository gymMemberRepository) {
-        this.gymMemberRepository = gymMemberRepository;
+    public GymMemberService(
+            GymMemberRepository memberRepository,
+            AcademyRepository academyRepository,
+            PersonalTrainerRepository trainerRepository) {
+
+        this.memberRepository = memberRepository;
+        this.academyRepository = academyRepository;
+        this.trainerRepository = trainerRepository;
     }
 
-    // --- CREATE
+    // --- CREATE ---
     @Transactional
-    public GymMember create(GymMember member) {
-        if (gymMemberRepository.findByEnrollment(member.getEnrollment()) != null) {
-            throw new IllegalStateException("Matrícula já existe.");
-        }
-        member.setActive(true);
-        return gymMemberRepository.save(member);
+    public GymMember create(GymMemberRequestDTO dto) {
+        // Validações de Relacionamento (Regra de Negócio)
+        Academy academy = academyRepository.findById(dto.getAcademyId())
+                .orElseThrow(() -> new NoSuchElementException("Academy not found."));
+
+        PersonalTrainer trainer = trainerRepository.findById(dto.getPersonalTrainerId())
+                .orElseThrow(() -> new NoSuchElementException("Personal Trainer not found."));
+
+        // Mapeamento DTO -> Entidade
+        GymMember member = new GymMember();
+        member.setFirstName(dto.getFirstName());
+        member.setLastName(dto.getLastName());
+        member.setDateOfBirth(dto.getDateOfBirth());
+        member.setGender(dto.getGender());
+        member.setEnrollment(dto.getEnrollment());
+
+        // Associações
+        member.setAcademy(academy);
+        member.setPersonalTrainer(trainer);
+
+        return memberRepository.save(member);
     }
 
-    // --- READ
+    // --- READ ---
     @Transactional(readOnly = true)
     public List<GymMember> findAll() {
-        return gymMemberRepository.findAll();
+        return memberRepository.findAll();
     }
 
     @Transactional(readOnly = true)
     public Optional<GymMember> findById(Long id) {
-        return gymMemberRepository.findById(id);
+        return memberRepository.findById(id);
     }
 
-    // --- UPDATE
+    // --- UPDATE ---
     @Transactional
-    public GymMember update(Long id, GymMember updatedData) {
-        GymMember existingMember = gymMemberRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("Membro não encontrado com ID: " + id));
+    public GymMember update(Long id, GymMemberRequestDTO dto) {
+        GymMember existingMember = memberRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Gym Member not found with ID: " + id));
 
-        existingMember.setFirstName(updatedData.getFirstName());
-        existingMember.setLastName(updatedData.getLastName());
-        existingMember.setEmail(updatedData.getEmail());
-        existingMember.setPhone(updatedData.getPhone());
-        existingMember.setAddress(updatedData.getAddress());
-        existingMember.setActive(updatedData.isActive());
+        // Atualiza campos de Person
+        existingMember.setFirstName(dto.getFirstName());
+        existingMember.setLastName(dto.getLastName());
+        existingMember.setDateOfBirth(dto.getDateOfBirth());
+        existingMember.setGender(dto.getGender());
 
-        return gymMemberRepository.save(existingMember);
+        // Atualiza campo específico
+        existingMember.setEnrollment(dto.getEnrollment());
+
+        // Associações (Se o ID de Academy ou Trainer mudar, a lógica deve ser implementada aqui)
+
+        return memberRepository.save(existingMember);
     }
 
-    // --- DELETE
+    // --- DELETE ---
     @Transactional
     public void deleteById(Long id) {
-        if (!gymMemberRepository.existsById(id)) {
-            throw new NoSuchElementException("Membro não encontrado com ID: " + id);
+        if (!memberRepository.existsById(id)) {
+            throw new NoSuchElementException("Gym Member not found with ID: " + id);
         }
-
-        gymMemberRepository.deleteById(id);
+        memberRepository.deleteById(id);
     }
 }

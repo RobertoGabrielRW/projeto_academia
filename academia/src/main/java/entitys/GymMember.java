@@ -22,7 +22,11 @@ public class GymMember extends Person {
 
 
     @Column(name = "enrollment", unique = true, nullable = false)
-    private Long enrollment;
+    private String enrollment;
+
+    @ManyToOne
+    @JoinColumn(name = "academy_id", nullable = false)
+    private Academy academy;
 
 
     @OneToMany(mappedBy = "gymMember", cascade = CascadeType.ALL, orphanRemoval = true)

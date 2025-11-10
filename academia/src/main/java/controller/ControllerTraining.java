@@ -17,7 +17,6 @@ public class ControllerTraining {
 
     private final TrainingService trainingService;
 
-
     public ControllerTraining(TrainingService trainingService) {
         this.trainingService = trainingService;
     }
@@ -26,23 +25,21 @@ public class ControllerTraining {
     @PostMapping
     public ResponseEntity<Training> createTraining(@Valid @RequestBody TrainingRequestDTO trainingDTO) {
 
-        Training trainingEntity = convertDtoToEntity(trainingDTO);
 
         try {
 
-            Training createdTraining = trainingService.create(trainingEntity);
+            Training createdTraining = trainingService.create(trainingDTO);
             return new ResponseEntity<>(createdTraining, HttpStatus.CREATED);
         } catch (NoSuchElementException e) {
-
+            // Este tratamento será melhorado com o GlobalExceptionHandler
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
     }
 
-    // --- 2. READ ALL (GET) ---
+    // --- 2. READ ALL
     @GetMapping
     public ResponseEntity<List<Training>> getAllTrainings() {
         List<Training> trainings = trainingService.findAll();
-
         return ResponseEntity.ok(trainings);
     }
 
@@ -57,10 +54,12 @@ public class ControllerTraining {
     // --- 4. UPDATE
     @PutMapping("/{id}")
     public ResponseEntity<Training> updateTraining(@PathVariable Long id, @Valid @RequestBody TrainingRequestDTO trainingDTO) {
-        Training updatedDataEntity = convertDtoToEntity(trainingDTO);
+
+
 
         try {
-            Training updatedTraining = trainingService.update(id, updatedDataEntity);
+
+            Training updatedTraining = trainingService.update(id, trainingDTO);
             return ResponseEntity.ok(updatedTraining);
         } catch (NoSuchElementException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -78,8 +77,4 @@ public class ControllerTraining {
         }
     }
 
-
-    private Training convertDtoToEntity(TrainingRequestDTO dto) {
-        return null;
-}
 }
