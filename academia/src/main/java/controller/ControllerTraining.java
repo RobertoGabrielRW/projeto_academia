@@ -3,7 +3,6 @@ package controller;
 import dto.TrainingRequestDTO;
 import service.TrainingService;
 import abstracts.Training;
-import entitys.GymMember;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,12 +13,12 @@ import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("/trainings") // URL base
-public class TrainingController {
+public class ControllerTraining {
 
     private final TrainingService trainingService;
 
 
-    public TrainingController(TrainingService trainingService) {
+    public ControllerTraining(TrainingService trainingService) {
         this.trainingService = trainingService;
     }
 
@@ -27,8 +26,11 @@ public class TrainingController {
     @PostMapping
     public ResponseEntity<Training> createTraining(@Valid @RequestBody TrainingRequestDTO trainingDTO) {
 
+        Training trainingEntity = convertDtoToEntity(trainingDTO);
+
         try {
-            Training createdTraining = trainingService.create(trainingDTO);
+
+            Training createdTraining = trainingService.create(trainingEntity);
             return new ResponseEntity<>(createdTraining, HttpStatus.CREATED);
         } catch (NoSuchElementException e) {
 
@@ -79,5 +81,5 @@ public class TrainingController {
 
     private Training convertDtoToEntity(TrainingRequestDTO dto) {
         return null;
-    }
+}
 }
