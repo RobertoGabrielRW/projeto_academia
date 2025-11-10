@@ -45,7 +45,7 @@ public class TrainingService {
         } else if ("FUNCTIONAL_TRAINING".equalsIgnoreCase(dto.getTrainingType())) {
             FunctionalTraining t = new FunctionalTraining();
             // Mapeamento dos atributos em Inglês
-            t.setUsesBodyweightOnly(dto.getUsesBodyWeightOnly());
+            t.setUsesBodyWeightOnly(dto.getUsesBodyWeightOnly());
             t.setDurationMinutes(dto.getDurationMinutes());
             newTraining = t;
 
@@ -90,7 +90,7 @@ public class TrainingService {
             wt.setTrainingSplit(dto.getTrainingSplit());
         } else if (existingTraining instanceof FunctionalTraining && "FUNCTIONAL_TRAINING".equalsIgnoreCase(dto.getTrainingType())) {
             FunctionalTraining ft = (FunctionalTraining) existingTraining;
-            ft.setUsesBodyweightOnly(dto.getUsesBodyWeightOnly());
+            ft.setUsesBodyWeightOnly(dto.getUsesBodyWeightOnly());
             ft.setDurationMinutes(dto.getDurationMinutes());
         }
 

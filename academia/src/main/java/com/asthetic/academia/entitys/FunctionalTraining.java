@@ -1,26 +1,25 @@
+
 package com.asthetic.academia.entitys;
 
-import com.asthetic.academia.abstracts.Training;
-import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import com.asthetic.academia.abstracts.Training;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
 
 @Entity
-@DiscriminatorValue("FUNCIONAL")
+@Data
+@EqualsAndHashCode(callSuper = true)
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
+@DiscriminatorValue("FUNCTIONAL_TRAINING")
 public class FunctionalTraining extends Training {
 
-    private Boolean usesBodyweightOnly;
+
+    private Boolean usesBodyWeightOnly;
     private Integer durationMinutes;
-    @Column(length = 50)
-    private String trainingSplit;
 
 
 }

@@ -10,7 +10,7 @@ import lombok.AllArgsConstructor;
 import jakarta.persistence.Column;
 
 @Entity
-@DiscriminatorValue("MUSCULACAO")
+@DiscriminatorValue("WEIGHT_TRAINING")
 @Getter
 @Setter
 @NoArgsConstructor

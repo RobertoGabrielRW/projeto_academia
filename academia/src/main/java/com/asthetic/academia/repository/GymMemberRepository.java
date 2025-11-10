@@ -7,5 +7,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface GymMemberRepository extends JpaRepository<GymMember, Long> {
 
-    GymMember findByEnrollment(Long enrollment);
+    GymMember findByEnrollment(String enrollment);
 }
