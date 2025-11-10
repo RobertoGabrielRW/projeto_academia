@@ -3,7 +3,6 @@ package controller;
 import dto.TrainingRequestDTO;
 import service.TrainingService;
 import abstracts.Training;
-import entitys.GymMember;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,12 +13,12 @@ import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("/trainings") // URL base
-public class TrainingController {
+public class ControllerTraining {
 
     private final TrainingService trainingService;
 
 
-    public TrainingController(TrainingService trainingService) {
+    public ControllerTraining(TrainingService trainingService) {
         this.trainingService = trainingService;
     }
 

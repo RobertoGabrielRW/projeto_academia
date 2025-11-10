@@ -1,70 +1,62 @@
 package controller;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import abstracts.Person;
 import org.springframework.web.bind.annotation.*;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicLong;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
+
+import java.util.List;
+import java.util.ArrayList;
 
 @RestController
-@RequestMapping("/persons")
-@CrossOrigin
+@RequestMapping("/people")
 public class PersonController {
 
-    private final Map<Long, Person> store = new ConcurrentHashMap<>();
-    private final AtomicLong idCounter = new AtomicLong(1);
+    private final List<Person> people = new ArrayList<>();
 
+    // GET - lista todas as pessoas
     @GetMapping
     public ResponseEntity<List<Person>> listAll() {
-        return ResponseEntity.ok(new ArrayList<>(store.values()));
+        return ResponseEntity.ok(people);
     }
 
+    // GET - busca por ID
     @GetMapping("/{id}")
-    public ResponseEntity<Person> getById(@PathVariable Long id) {
-        return Optional.ofNullable(store.get(id))
+    public ResponseEntity<Person> getById(@PathVariable long id) {
+        return people.stream()
+                .filter(p -> p.getId() == id)
+                .findFirst()
                 .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
+    // POST - cria nova pessoa
     @PostMapping
-    public ResponseEntity<Person> create(@RequestBody @jakarta.validation.Valid Person person) {
-        long id = idCounter.getAndIncrement();
-        person.setId(id);
-        store.put(id, person);
+    public ResponseEntity<Person> create(@RequestBody Person person) {
+        people.add(person);
         return ResponseEntity.status(HttpStatus.CREATED).body(person);
     }
 
+    // PUT - atualiza pessoa existente
     @PutMapping("/{id}")
-    public ResponseEntity<Person> update(@PathVariable Long id,
-                                         @RequestBody @jakarta.validation.Valid Person person) {
-        if (!store.containsKey(id)) {
-            return ResponseEntity.notFound().build();
+    public ResponseEntity<Person> update(@PathVariable long id, @RequestBody Person updatedPerson) {
+        for (Person person : people) {
+            if (person.getId() == id) {
+                person.setDateOfBirth(updatedPerson.getDateOfBirth());
+                person.setDateOfBirth(updatedPerson.getDateOfBirth());
+                return ResponseEntity.ok(person);
+            }
         }
-        person.setId(id);
-        store.put(id, person);
-        return ResponseEntity.ok(person);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 
+    // DELETE - remove pessoa por ID
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
-        return (store.remove(id) != null)
-                ? ResponseEntity.noContent().build()
-                : ResponseEntity.notFound().build();
-    }
-
-    // DTO usando Lombok e Jakarta Validation
-    @lombok.Data
-    @lombok.NoArgsConstructor
-    @lombok.AllArgsConstructor
-    @lombok.Builder
-    public static class Person {
-        private Long id;
-
-        @jakarta.validation.constraints.NotBlank(message = "name must not be blank")
-        private String name;
-
-        @jakarta.validation.constraints.Min(value = 0, message = "age must be >= 0")
-        private Integer age;
+    public ResponseEntity<Void> delete(@PathVariable long id) {
+        boolean removed = people.removeIf(p -> p.getId() == id);
+        if (removed) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 }
