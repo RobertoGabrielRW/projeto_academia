@@ -1,15 +1,15 @@
 package entitys;
 
 import jakarta.persistence.*;
-import lombok.Getter; // 1. Usar @Getter
-import lombok.Setter; // 2. Usar @Setter
+import lombok.Getter;
+import lombok.Setter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "academy") // snake_case
+@Table(name = "academy")
 @Getter
 @Setter
 @NoArgsConstructor

@@ -2,14 +2,18 @@ package entitys;
 
 import abstracts.Person;
 import jakarta.persistence.*;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "personal_trainer")
 @PrimaryKeyJoinColumn(name = "person_id")
 @NoArgsConstructor
 @AllArgsConstructor
+@Getter
+@Setter
 public class PersonalTrainer extends Person {
 
 
