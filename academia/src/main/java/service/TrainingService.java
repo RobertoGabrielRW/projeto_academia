@@ -45,7 +45,7 @@ public class TrainingService {
         } else if ("FUNCTIONAL_TRAINING".equalsIgnoreCase(dto.getTrainingType())) {
             FunctionalTraining t = new FunctionalTraining();
             // Mapeamento dos atributos em Inglês
-            t.setUsesBodyWeightOnly(dto.getUsesBodyWeightOnly());
+            t.setUsesBodyweightOnly(dto.getUsesBodyWeightOnly());
             t.setDurationMinutes(dto.getDurationMinutes());
             newTraining = t;
 
@@ -53,7 +53,7 @@ public class TrainingService {
             throw new IllegalArgumentException("Unknown training type: " + dto.getTrainingType());
         }
 
-        // 3. Mapeamento de campos comuns
+
         newTraining.setName(dto.getName());
         newTraining.setIntensity(dto.getIntensity());
         newTraining.setGoal(dto.getGoal());
@@ -73,24 +73,24 @@ public class TrainingService {
         return trainingRepository.findById(id);
     }
 
-    // --- UPDATE (Com nomes em Inglês) ---
+    // --- UPDATE
     @Transactional
     public Training update(Long id, TrainingRequestDTO dto) {
         Training existingTraining = trainingRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Training not found with ID: " + id));
 
-        // 1. Mapeia campos comuns
+
         existingTraining.setName(dto.getName());
         existingTraining.setIntensity(dto.getIntensity());
         existingTraining.setGoal(dto.getGoal());
 
-        // 2. Mapeamento de campos específicos (com nomes em Inglês)
+
         if (existingTraining instanceof WeightTraining && "WEIGHT_TRAINING".equalsIgnoreCase(dto.getTrainingType())) {
             WeightTraining wt = (WeightTraining) existingTraining;
             wt.setTrainingSplit(dto.getTrainingSplit());
         } else if (existingTraining instanceof FunctionalTraining && "FUNCTIONAL_TRAINING".equalsIgnoreCase(dto.getTrainingType())) {
             FunctionalTraining ft = (FunctionalTraining) existingTraining;
-            ft.setUsesBodyWeightOnly(dto.getUsesBodyWeightOnly());
+            ft.setUsesBodyweightOnly(dto.getUsesBodyWeightOnly());
             ft.setDurationMinutes(dto.getDurationMinutes());
         }
 
