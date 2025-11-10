@@ -1,8 +1,13 @@
 package service;
 
 import abstracts.Training;
+import dto.TrainingRequestDTO;
 import repository.TrainingRepository;
 import repository.GymMemberRepository;
+import entitys.WeightTraining; // Nome em Inglês
+import entitys.FunctionalTraining; // Nome em Inglês
+import entitys.GymMember;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
@@ -20,17 +25,44 @@ public class TrainingService {
         this.gymMemberRepository = gymMemberRepository;
     }
 
-    // --- CREATE
+    // --- CREATE (Com nomes em Inglês) ---
     @Transactional
-    public Training create(Training training) {
+    public Training create(TrainingRequestDTO dto) {
 
-        gymMemberRepository.findById(training.getGymMember().getId())
-                .orElseThrow(() -> new NoSuchElementException("Membro não encontrado para criar o Treino."));
+        // 1. Valida se o membro existe
+        GymMember member = gymMemberRepository.findById(dto.getGymMemberId())
+                .orElseThrow(() -> new NoSuchElementException("Member not found for Training creation."));
 
-        return trainingRepository.save(training);
+        Training newTraining;
+
+        // 2. LÓGICA DE DECISÃO DE HERANÇA (Tipos em Inglês)
+        if ("WEIGHT_TRAINING".equalsIgnoreCase(dto.getTrainingType())) {
+            WeightTraining t = new WeightTraining();
+            // Mapeamento dos atributos em Inglês
+            t.setTrainingSplit(dto.getTrainingSplit());
+            newTraining = t;
+
+        } else if ("FUNCTIONAL_TRAINING".equalsIgnoreCase(dto.getTrainingType())) {
+            FunctionalTraining t = new FunctionalTraining();
+            // Mapeamento dos atributos em Inglês
+            t.setUsesBodyWeightOnly(dto.getUsesBodyWeightOnly());
+            t.setDurationMinutes(dto.getDurationMinutes());
+            newTraining = t;
+
+        } else {
+            throw new IllegalArgumentException("Unknown training type: " + dto.getTrainingType());
+        }
+
+        // 3. Mapeamento de campos comuns
+        newTraining.setName(dto.getName());
+        newTraining.setIntensity(dto.getIntensity());
+        newTraining.setGoal(dto.getGoal());
+        newTraining.setGymMember(member);
+
+        return trainingRepository.save(newTraining);
     }
 
-    // --- READ
+    // --- READ (Busca) ---
     @Transactional(readOnly = true)
     public List<Training> findAll() {
         return trainingRepository.findAll();
@@ -41,32 +73,36 @@ public class TrainingService {
         return trainingRepository.findById(id);
     }
 
-    @Transactional(readOnly = true)
-    public List<Training> findTrainingsByMember(Long memberId) {
-        return trainingRepository.findByGymMemberId(memberId);
-    }
-
-    // --- UPDATE
+    // --- UPDATE (Com nomes em Inglês) ---
     @Transactional
-    public Training update(Long id, Training updatedData) {
-
+    public Training update(Long id, TrainingRequestDTO dto) {
         Training existingTraining = trainingRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("Treino não encontrado com ID: " + id));
+                .orElseThrow(() -> new NoSuchElementException("Training not found with ID: " + id));
 
-        existingTraining.setName(updatedData.getName());
-        existingTraining.setIntensity(updatedData.getIntensity());
-        existingTraining.setGoal(updatedData.getGoal());
+        // 1. Mapeia campos comuns
+        existingTraining.setName(dto.getName());
+        existingTraining.setIntensity(dto.getIntensity());
+        existingTraining.setGoal(dto.getGoal());
+
+        // 2. Mapeamento de campos específicos (com nomes em Inglês)
+        if (existingTraining instanceof WeightTraining && "WEIGHT_TRAINING".equalsIgnoreCase(dto.getTrainingType())) {
+            WeightTraining wt = (WeightTraining) existingTraining;
+            wt.setTrainingSplit(dto.getTrainingSplit());
+        } else if (existingTraining instanceof FunctionalTraining && "FUNCTIONAL_TRAINING".equalsIgnoreCase(dto.getTrainingType())) {
+            FunctionalTraining ft = (FunctionalTraining) existingTraining;
+            ft.setUsesBodyWeightOnly(dto.getUsesBodyWeightOnly());
+            ft.setDurationMinutes(dto.getDurationMinutes());
+        }
 
         return trainingRepository.save(existingTraining);
     }
 
-    // --- DELETE
+    // --- DELETE (Deleção) ---
     @Transactional
     public void deleteById(Long id) {
         if (!trainingRepository.existsById(id)) {
-            throw new NoSuchElementException("Treino não encontrado com ID: " + id);
+            throw new NoSuchElementException("Training not found with ID: " + id);
         }
-
         trainingRepository.deleteById(id);
     }
 }
