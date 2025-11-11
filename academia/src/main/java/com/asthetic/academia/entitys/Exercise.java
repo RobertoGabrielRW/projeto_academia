@@ -14,16 +14,18 @@ import java.util.ArrayList;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-
 public class Exercise {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-
-
     @Column(name = "exercise_name", nullable = false, length = 100)
     private String exerciseName;
+
+    // CAMPO DE DESCRIÇÃO ADICIONADO
+    @Column(name = "description", length = 500)
+    private String description;
 
     @Column(name = "muscle_group", length = 50)
     private String muscleGroup;
@@ -36,5 +38,4 @@ public class Exercise {
 
     @OneToMany(mappedBy = "exercise", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TrainingItem> trainingItems = new ArrayList<>();
-
 }

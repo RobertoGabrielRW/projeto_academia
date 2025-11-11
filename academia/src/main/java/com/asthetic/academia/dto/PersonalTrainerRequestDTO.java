@@ -1,14 +1,16 @@
 package com.asthetic.academia.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
+import lombok.*;
+
 import java.time.LocalDate;
 
 @Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class PersonalTrainerRequestDTO {
@@ -26,6 +28,7 @@ public class PersonalTrainerRequestDTO {
     private String phone;
 
     @NotNull
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd") // ADICIONAR ESTA LINHA
     private LocalDate dateOfBirth;
 
     @NotBlank

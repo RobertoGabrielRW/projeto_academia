@@ -4,6 +4,7 @@ import com.asthetic.academia.dto.GymMemberRequestDTO;
 import com.asthetic.academia.entitys.GymMember;
 import com.asthetic.academia.entitys.Academy;
 import com.asthetic.academia.entitys.PersonalTrainer;
+import com.asthetic.academia.entitys.Address; // IMPORT NECESSÁRIO
 import com.asthetic.academia.repository.GymMemberRepository;
 import com.asthetic.academia.repository.AcademyRepository;
 import com.asthetic.academia.repository.PersonalTrainerRepository;
@@ -31,7 +32,7 @@ public class GymMemberService {
         this.trainerRepository = trainerRepository;
     }
 
-    // --- CREATE ---
+    // --- CREATE (Método Corrigido) ---
     @Transactional
     public GymMember create(GymMemberRequestDTO dto) {
         // Validações de Relacionamento (Regra de Negócio)
@@ -43,17 +44,32 @@ public class GymMemberService {
 
         // Mapeamento DTO -> Entidade
         GymMember member = new GymMember();
+
+        // Mapeamento dos campos herdados de Person (incluindo contato)
         member.setFirstName(dto.getFirstName());
         member.setLastName(dto.getLastName());
         member.setDateOfBirth(dto.getDateOfBirth());
         member.setGender(dto.getGender());
+        member.setEmail(dto.getEmail());
+        member.setPhone(dto.getPhone());
+
+        // CRÍTICO: Mapeamento do Endereço (Corrigindo o 500)
+        Address address = new Address();
+        address.setStreet(dto.getStreet());
+        address.setHouseNumber(dto.getHouseNumber());
+        address.setPostalCode(dto.getPostalCode());
+        address.setComplement(dto.getComplement());
+
+        member.setAddress(address); // Atribui o objeto Address à entidade Person/GymMember
+
+        // Mapeamento do campo específico
         member.setEnrollment(dto.getEnrollment());
 
         // Associações
         member.setAcademy(academy);
         member.setPersonalTrainer(trainer);
 
-        return memberRepository.save(member);
+        return memberRepository.saveAndFlush(member);
     }
 
     // --- READ ---
@@ -78,11 +94,17 @@ public class GymMemberService {
         existingMember.setLastName(dto.getLastName());
         existingMember.setDateOfBirth(dto.getDateOfBirth());
         existingMember.setGender(dto.getGender());
-
-        // Atualiza campo específico
         existingMember.setEnrollment(dto.getEnrollment());
+        existingMember.setEmail(dto.getEmail()); // NOVO
+        existingMember.setPhone(dto.getPhone()); // NOVO
 
-        // Associações (Se o ID de Academy ou Trainer mudar, a lógica deve ser implementada aqui)
+        // Atualiza Endereço
+        Address updatedAddress = existingMember.getAddress() != null ? existingMember.getAddress() : new Address();
+        updatedAddress.setStreet(dto.getStreet());
+        updatedAddress.setHouseNumber(dto.getHouseNumber());
+        updatedAddress.setPostalCode(dto.getPostalCode());
+        updatedAddress.setComplement(dto.getComplement());
+        existingMember.setAddress(updatedAddress);
 
         return memberRepository.save(existingMember);
     }

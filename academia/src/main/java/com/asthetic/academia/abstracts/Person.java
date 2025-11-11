@@ -1,6 +1,6 @@
 package com.asthetic.academia.abstracts;
 
-import com.asthetic.academia.entitys.Address; // Classe @Embeddable para composição do endereço
+import com.asthetic.academia.entitys.Address;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 

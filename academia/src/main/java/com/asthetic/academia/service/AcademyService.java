@@ -1,12 +1,15 @@
 package com.asthetic.academia.service;
 
+import com.asthetic.academia.dto.AcademyRequestDTO;
 import com.asthetic.academia.entitys.Academy;
+import com.asthetic.academia.entitys.Address;
 import com.asthetic.academia.repository.AcademyRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
-import java.util.Optional;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @Service
 public class AcademyService {
@@ -17,48 +20,65 @@ public class AcademyService {
         this.academyRepository = academyRepository;
     }
 
-    // --- CREATE
+    // --- 1. CREATE (POST) ---
     @Transactional
-    public Academy create(Academy academy) {
-        if (academyRepository.findByCorporateTaxId(academy.getCorporateTaxId()) != null) {
-            throw new IllegalStateException("CNPJ já cadastrado.");
-        }
+    public Academy create(AcademyRequestDTO academyDTO) {
+        // Mapeia o DTO para o objeto Address @Embedded
+        Address address = new Address();
+        address.setStreet(academyDTO.getStreet());
+        address.setHouseNumber(academyDTO.getHouseNumber());
+        address.setPostalCode(academyDTO.getPostalCode());
+        address.setComplement(academyDTO.getComplement());
+
+        // Mapeia o DTO para a Entidade Academy
+        Academy academy = new Academy();
+        academy.setCorporateTaxId(academyDTO.getCorporateTaxId());
+        academy.setEmail(academyDTO.getEmail());
+        academy.setPhone(academyDTO.getPhone());
+        academy.setAddress(address);
+
         return academyRepository.save(academy);
     }
 
-    // --- READ
-    @Transactional(readOnly = true)
+    // --- 2. READ ALL (GET) ---
     public List<Academy> findAll() {
         return academyRepository.findAll();
     }
 
-    @Transactional(readOnly = true)
+    // --- 3. READ BY ID (GET) ---
     public Optional<Academy> findById(Long id) {
         return academyRepository.findById(id);
     }
 
-    // --- UPDATE
+    // --- 4. UPDATE (PUT) ---
     @Transactional
-    public Academy update(Long id, Academy updatedData) {
+    public Academy update(Long id, AcademyRequestDTO academyDTO) {
         Academy existingAcademy = academyRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("Academia não encontrada com ID: " + id));
+                .orElseThrow(() -> new NoSuchElementException("Academia não encontrada com o ID: " + id));
 
+        // Atualiza campos básicos
+        existingAcademy.setCorporateTaxId(academyDTO.getCorporateTaxId());
+        existingAcademy.setEmail(academyDTO.getEmail());
+        existingAcademy.setPhone(academyDTO.getPhone());
 
-        existingAcademy.setEmail(updatedData.getEmail());
-        existingAcademy.setPhone(updatedData.getPhone());
+        // Atualiza o endereço @Embedded
+        Address existingAddress = existingAcademy.getAddress() != null ? existingAcademy.getAddress() : new Address();
+        existingAddress.setStreet(academyDTO.getStreet());
+        existingAddress.setHouseNumber(academyDTO.getHouseNumber());
+        existingAddress.setPostalCode(academyDTO.getPostalCode());
+        existingAddress.setComplement(academyDTO.getComplement());
 
-
+        existingAcademy.setAddress(existingAddress);
 
         return academyRepository.save(existingAcademy);
     }
 
-    // DELETE
+    // --- 5. DELETE (DELETE) ---
     @Transactional
     public void deleteById(Long id) {
         if (!academyRepository.existsById(id)) {
-            throw new NoSuchElementException("Academia não encontrada com ID: " + id);
+            throw new NoSuchElementException("Academia não encontrada com o ID: " + id);
         }
-
         academyRepository.deleteById(id);
     }
 }

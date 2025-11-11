@@ -13,11 +13,11 @@ import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("/members")
-public class GymMemberController {
+public class ControllerGymMember {
 
     private final GymMemberService memberService;
 
-    public GymMemberController(GymMemberService memberService) {
+    public ControllerGymMember(GymMemberService memberService) {
         this.memberService = memberService;
     }
 

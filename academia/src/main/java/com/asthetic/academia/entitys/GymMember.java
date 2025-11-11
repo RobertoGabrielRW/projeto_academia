@@ -4,10 +4,8 @@ import com.asthetic.academia.abstracts.Person;
 import com.asthetic.academia.abstracts.Training;
 import com.asthetic.academia.entitys.PersonalTrainer;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
+import lombok.*;
+
 import java.util.List;
 import java.util.ArrayList;
 
@@ -19,6 +17,7 @@ import java.util.ArrayList;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 public class GymMember extends Person {
 
 

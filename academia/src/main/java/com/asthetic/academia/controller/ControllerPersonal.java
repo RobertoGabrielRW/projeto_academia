@@ -1,55 +1,93 @@
 package com.asthetic.academia.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
+import com.asthetic.academia.dto.PersonalTrainerRequestDTO;
 import com.asthetic.academia.entitys.PersonalTrainer;
-import com.asthetic.academia.repository.PersonalTrainerRepository;
+import com.asthetic.academia.service.PersonalTrainerService;
+
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import java.util.List;
+import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("/personal")
-
-
 public class ControllerPersonal {
 
-    @Autowired
-    private PersonalTrainerRepository repository;
+    private final PersonalTrainerService personalTrainerService;
 
-    // Criar novo registro
+    public ControllerPersonal(PersonalTrainerService personalTrainerService) {
+        this.personalTrainerService = personalTrainerService;
+    }
+
+    // --- 1. CRIAR / CREATE (POST) ---
+
     @PostMapping
-    public PersonalTrainer create(@RequestBody PersonalTrainer personal) {
-        return repository.save(personal);
+    public ResponseEntity<PersonalTrainer> createTrainer(@Valid @RequestBody PersonalTrainerRequestDTO trainerDTO) {
+        try {
+            PersonalTrainer createdTrainer = personalTrainerService.create(trainerDTO);
+            return new ResponseEntity<>(createdTrainer, HttpStatus.CREATED);
+        } catch (NoSuchElementException e) {
+            // Academy não encontrada
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        }
     }
 
-    // Listar todos
+    // --- 2. LER TODOS / READ ALL (GET) ---
+
     @GetMapping
-    public Iterable<PersonalTrainer> listAll() {
-        return repository.findAll();
+    public ResponseEntity<List<PersonalTrainer>> getAllTrainers() {
+        List<PersonalTrainer> trainers = personalTrainerService.findAll();
+        return ResponseEntity.ok(trainers);
     }
 
-    // Buscar por ID
+    // --- 3. LER POR ID / READ BY ID (GET) ---
+
     @GetMapping("/{id}")
-    public PersonalTrainer findById(@PathVariable Long id) {
-        return repository.findById(id).orElse(null);
+    public ResponseEntity<PersonalTrainer> getTrainerById(@PathVariable Long id) {
+        return personalTrainerService.findById(id)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    // Atualizar
+    // --- 4. ATUALIZAR / UPDATE (PUT) ---
+
     @PutMapping("/{id}")
-    public PersonalTrainer update(@PathVariable Long id, @RequestBody PersonalTrainer personal) {
-        personal.setId(id);
-        return repository.save(personal);
+    public ResponseEntity<PersonalTrainer> updateTrainer(@PathVariable Long id, @Valid @RequestBody PersonalTrainerRequestDTO trainerDTO) {
+        try {
+            PersonalTrainer updatedTrainer = personalTrainerService.update(id, trainerDTO);
+            return ResponseEntity.ok(updatedTrainer);
+        } catch (NoSuchElementException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        }
     }
 
-    // Deletar
+    // --- 5. DELETAR / DELETE (DELETE) ---
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable Long id) {
-        repository.deleteById(id);
+    public ResponseEntity<Void> deleteTrainer(@PathVariable Long id) {
+        try {
+            personalTrainerService.deleteById(id);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch (NoSuchElementException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    /**
+     *Retorna Personal Trainers cuja taxa horária está abaixo da média
+     * de todos os trainers na mesma especialidade.
+     */
+    @GetMapping("/search/below-average-rate")
+    public ResponseEntity<List<PersonalTrainer>> getTrainersBelowAverageRate() {
+        List<PersonalTrainer> trainers = personalTrainerService.findTrainersBelowAverageRate();
+
+        if (trainers.isEmpty()) {
+            // Retorna 404 se não houver resultados que atendam à condição
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(trainers);
     }
 }

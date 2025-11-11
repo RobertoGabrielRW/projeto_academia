@@ -6,12 +6,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class TrainingRequestDTO {
 
-    // CAMPOS COMUNS (Herdados de Training)
+
     @NotBlank(message = "O nome do treino é obrigatório.")
     private String name;
 
@@ -22,16 +24,17 @@ public class TrainingRequestDTO {
     private String goal;
 
     @NotNull(message = "O ID do membro é obrigatório.")
-    private Long gymMemberId;
+    private Long memberId;
+    private Double estimatedCalories;
 
-    // CAMPO DISCRIMINADOR (Decide qual subclasse será instanciada)
+
     @NotBlank(message = "O tipo de treino é obrigatório (MUSCULACAO ou FUNCIONAL).")
     private String trainingType;
 
-    // CAMPOS ESPECÍFICOS DE TREINO MUSCULAÇÃO (WeightTraining)
-    private String trainingSplit; // Ex: Full Body, PPL, ABC (divisaoDoTreinamento)
 
-    // CAMPOS ESPECÍFICOS DE TREINO FUNCIONAL (FunctionalTraining)
-    private Boolean usesBodyWeightOnly; // Ex: true/false (usaApenasPesoCorpo)
-    private Integer durationMinutes; // Ex: 45, 60 (duracaoMinutos)
+    private String trainingSplit;
+
+    private List<TrainingItemRequestDTO> trainingItems;
+    private Boolean usesBodyWeightOnly;
+    private Integer durationMinutes;
 }
