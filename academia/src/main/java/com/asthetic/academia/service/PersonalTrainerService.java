@@ -120,12 +120,14 @@ public class PersonalTrainerService {
         personalTrainerRepository.deleteById(id);
     }
 
-    // --- 6. CONSULTA COMPLEXA
+    // --- 6. CONSULTA COMPLEXA (RENOMEADO E CORRIGIDO) ---
     /**
-     * Busca Personal Trainers com taxa horária abaixo da média para a sua especialidade.
+     * Mapeia para a consulta de trainers abaixo da média de sua especialidade.
+     * O parâmetro 'specialty' foi removido pois a consulta JPQL não o utiliza.
      */
     @Transactional(readOnly = true)
-    public List<PersonalTrainer> findTrainersBelowAverageRate() {
+    public List<PersonalTrainer> findTrainersBelowAverageRate() { // RENOMEADO AQUI
+        // Chama a consulta de subconsulta (abaixo da média)
         return personalTrainerRepository.findTrainersBelowAverageRateBySpecialty();
     }
 }

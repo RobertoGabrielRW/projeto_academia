@@ -70,23 +70,24 @@ public class ControllerPersonal {
     public ResponseEntity<Void> deleteTrainer(@PathVariable Long id) {
         try {
             personalTrainerService.deleteById(id);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT); // 204 No Content
         } catch (NoSuchElementException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND); // 404 Not Found
         }
     }
 
+    // --- 6. CONSULTA COMPLEXA (BUSCA POR SUB-CONSULTA) ---
     /**
-     *Retorna Personal Trainers cuja taxa horária está abaixo da média
-     * de todos os trainers na mesma especialidade.
+     * GET /personal/low-rate
+     * Retorna Personal Trainers com taxa horária abaixo da média de sua especialidade.
      */
-    @GetMapping("/search/below-average-rate")
+    @GetMapping("/low-rate")
     public ResponseEntity<List<PersonalTrainer>> getTrainersBelowAverageRate() {
+        // Chama o método de serviço, que executa a consulta de sub-agregação
         List<PersonalTrainer> trainers = personalTrainerService.findTrainersBelowAverageRate();
 
         if (trainers.isEmpty()) {
-            // Retorna 404 se não houver resultados que atendam à condição
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.notFound().build(); // 404 Not Found
         }
         return ResponseEntity.ok(trainers);
     }
